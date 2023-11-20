@@ -1,23 +1,31 @@
-const mongoose = require('mongoose');
+const { Schema, model } = require('mongoose');
 
-const socialSchema = new mongoose.Schema({
-    username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
-    // thoughts array of _id values referencing the thought model
-    // friends array of _id values referencing the user model (self-reference)
-    // create virtual called friendCount that retrieves the length of the user's friends array field on query
-});
+// Schema to create User model
+const userSchema = new Schema(
+    { username: { type: String, required: true, unique: true, trim: true, },
+      email: { type: String, trim: true, required: true, unique: true, validate: {
+                validator: function (validate) {
+                    return /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,8}$/.test(validate);
+                },
+                message: 'Please enter a valid email'
+            },
+            required: [true, "Email required"] },
+        thoughts: [
+            { type: Schema.Types.ObjectId, ref: 'thought', }
+        ],
+        friends: [
+            { type: Schema.Types.ObjectId, ref: 'user', },
+        ],
+    },
+    { toJSON: { virtuals: true, getters: true, },
+        id: false,
+    }
+);
 
-const User = mongoose.model('User', socialSchema);
+userSchema.virtual('friendCount').get(function () {
+    return this.friends.length;
+})
 
-const handleError = (err) => console.error(err);
-
-User
-    .create({
-        username: 'Shay',
-        email: 'email1@email.com',
-    })
-    .then(result => console.log('Created new document', result))
-    .catch(err => handleError(err));
+const User = model('user', userSchema);
 
 module.exports = User;
