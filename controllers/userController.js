@@ -1,8 +1,18 @@
 const { User, Thought } = require('../models');
 
 module.exports = {
-    // GET all users
-    async getAllUsers(req, res) {
+    // Create a new user
+    async createUser(req, res) {
+        try {
+            const dbUserData = await User.create(req.body);
+            res.json(dbUserData);
+        } catch (err) {
+            res.status(500).json(err);
+        }
+    },
+
+       // GET all users
+       async getAllUsers(req, res) {
         try {
             const users = await User.find();
             res.json(users);
@@ -10,6 +20,7 @@ module.exports = {
             res.status(500).json(err);
         }
     },
+
     // GET a single user by ID
     async getSingleUser(req, res) {
         try {
@@ -26,15 +37,8 @@ module.exports = {
             res.status(500).json(err);
         }
     },
-    // Create a new user
-    async createUser(req, res) {
-        try {
-            const dbUserData = await User.create(req.body);
-            res.json(dbUserData);
-        } catch (err) {
-            res.status(500).json(err);
-        }
-    },
+
+
     // Update a user
     async updateUser(req, res) {
         try {
@@ -53,6 +57,7 @@ module.exports = {
             res.status(500).json(err);
         }
     },
+
     // Delete a user
     async deleteUser(req, res) {
         try {
