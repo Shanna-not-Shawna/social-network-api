@@ -1,6 +1,7 @@
 const express = require ('express');
 const db = require('./config/connection');
-const { User } = require('./models');
+// const { User } = require('./models');
+const routes = require('./routes');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
@@ -17,6 +18,7 @@ app.use(routes);
 //         res.status(500).send({ message: 'Internal Server Error' })
 //     }
 // });
+
 
 db.once('open', () => {
     app.listen(PORT, () => {
