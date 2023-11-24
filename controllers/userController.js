@@ -24,6 +24,7 @@ module.exports = {
     // GET a single user by ID
     async getSingleUser(req, res) {
         try {
+            console.log(`getSingleUser route reached with ID: ${req.params.userId}`);
             const user = await User.findOne({ _id: req.params.userId })
                 .select('-__v')
                 .populate({ path: 'thoughts' })
@@ -31,13 +32,13 @@ module.exports = {
             if (!user) {
                 return res.status(404).json({ message: 'No user with that ID' });
             }
-
+            console.log('User found:', user);
             res.json(user);
         } catch (err) {
-            res.status(500).json(err);
+            console.error('Error in getSingleUser:', err);
+        res.status(500).json(err);
         }
     },
-
 
     // Update a user
     async updateUser(req, res) {
@@ -61,16 +62,20 @@ module.exports = {
     // Delete a user
     async deleteUser(req, res) {
         try {
-            const user = await User.findByIdAndRemove({ _id: req.params.userId }
-            );
+            console.log(`deleteUser route reached with ID: ${req.params.userId}`);
+            const user = await User.findByIdAndRemove({ _id: req.params.userId });
 
             if (!user) {
-                return res.status(404).json({ message: 'No user with this id found' });
+                console.log(`No user found with ID: ${req.params.userId}`);
+                return res.status(404).json({ message: 'No user with id found' });
             }
+            
+            console.log('User deleted:', user);
             await Thought.deleteMany({ _id: { $in: user.thoughts } });
 
-            res.json({ message: 'User has been successfully deleted' });
+            res.json({ message: 'User successfully deleted' });
         } catch (err) {
+            console.error('Error in deleteUser:', err);
             res.status(500).json(err)
         }
     },
@@ -84,7 +89,7 @@ module.exports = {
                 { new: true }
             );
 
-            res.json({ message: 'Friend added. Yay!', data: user });
+            res.json({ message: 'Friend added.', data: user });
         } catch (err) {
             res.status(500).json(err);
         }
@@ -100,7 +105,7 @@ module.exports = {
             )
 
             if (!user) {
-                return res.status(404).json({ message: 'No user found with this id!' });
+                return res.status(404).json({ message: 'No user with this id!' });
             }
 
             res.json(user);
@@ -108,4 +113,5 @@ module.exports = {
             res.status(500).json(err);
         }
     },
+
 };
