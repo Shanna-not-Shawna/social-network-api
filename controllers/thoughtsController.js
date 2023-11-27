@@ -66,7 +66,7 @@ module.exports = {
                 });
             }
 
-            res.json(thought);
+            res.json('Successfully updated thought');
         } catch (err) {
             res.status(500).json(err);
         }
@@ -75,7 +75,7 @@ module.exports = {
     // delete a thought 
     async deleteThought(req, res) {
         try {
-            const thought = await Thought.findOneAndRemove({ _id: req.params.thoughtsId });
+            const thought = await Thought.findOneAndDelete({ _id: req.params.thoughtsId });
 
             if (!thought) {
                 return res.status(404).json({
@@ -83,13 +83,13 @@ module.exports = {
                 });
             }
             // remove thought id from user's `thoughts` field
-            const dbUserData = User.findOneAndUpdate(
+            const dbUserData = User.findOneAndDelete(
                 { thoughts: req.params.thoughtsId },
                 { $pull: { thoughts: req.params.thoughtsId } },
                 { new: true }
             );
 
-            res.json(thought);
+            res.json('Successfully deleted reaction');
         } catch (err) {
             console.log(err);
             res.status(500).json(err);
@@ -111,7 +111,7 @@ module.exports = {
                 });
             }
 
-            res.json(thought);
+            res.json('Successfully added reaction');
         } catch (err) {
             res.status(500).json(err);
         }
@@ -132,9 +132,7 @@ module.exports = {
                 return res.status(404).json({ message: 'No thought found with that ID' });
             }
 
-            console.log('Thought after reaction removal:', thought);
-
-            res.json(thought);
+            res.json('Successfully removed reaction');
         } catch (err) {
             console.error('Error in removeThoughtReaction:', err);
             res.status(500).json(err);

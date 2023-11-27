@@ -24,7 +24,6 @@ module.exports = {
     // GET a single user by ID
     async getSingleUser(req, res) {
         try {
-            console.log(`getSingleUser route reached with ID: ${req.params.userId}`);
             const user = await User.findOne({ _id: req.params.userId })
                 .select('-__v')
                 .populate({ path: 'thoughts' })
@@ -33,7 +32,6 @@ module.exports = {
             if (!user) {
                 return res.status(404).json({ message: 'No user with that ID' });
             }
-            console.log('User found:', user);
             res.json(user);
         } catch (err) {
             console.error('Error in getSingleUser:', err);
@@ -54,7 +52,7 @@ module.exports = {
                 return res.status(404).json({ message: 'No user with this id found' });
             }
 
-            res.json(user);
+            res.json('Successfully updated user');
         } catch (err) {
             res.status(500).json(err);
         }
@@ -63,15 +61,12 @@ module.exports = {
     // Delete a user
     async deleteUser(req, res) {
         try {
-            console.log(`deleteUser route reached with ID: ${req.params.userId}`);
             const user = await User.findOneAndDelete({ _id: req.params.userId });
 
             if (!user) {
-                console.log(`No user found with ID: ${req.params.userId}`);
                 return res.status(404).json({ message: 'No user with id found' });
             }
             
-            console.log('User deleted:', user);
             await Thought.deleteMany({ _id: { $in: user.thoughts } });
 
             res.json({ message: 'User successfully deleted' });
@@ -109,7 +104,7 @@ module.exports = {
                 return res.status(404).json({ message: 'No user with this id!' });
             }
 
-            res.json(user);
+            res.json('Successfully removed friend');
         } catch (err) {
             res.status(500).json(err);
         }
