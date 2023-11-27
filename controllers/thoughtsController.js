@@ -89,7 +89,7 @@ module.exports = {
                 { new: true }
             );
 
-            res.json('Successfully deleted reaction');
+            res.json('Successfully deleted');
         } catch (err) {
             console.log(err);
             res.status(500).json(err);
